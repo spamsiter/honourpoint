@@ -1,0 +1,96 @@
+----------------------------------------------------------------------------SET 1 ------------------------------------------------------------------------------
+
+QUESTION 2 :
+ SELECT NAME,CITY from author where aid in(select aid from written
+_by where isbn in(select isbn from book where title='DOS' or title='AD
+A'));
+
+QUESTION 3 :
+SELECT ISBN,TITLE FROM BOOK WHERE PRICE=(SELECT MAX(PRICE)FROM BOOK);
+
+QUESTION 4 : 
+ SELECT COUNT(*),CITY FROM AUTHOR GROUP BY CITY;
+
+QUESTION 5 :
+SELECT NAME,TITLE FROM BOOK NATURAL JOIN WRITTEN_BY NATURAL JOIN AUTHOR WHERE NAME LIKE '%N' ;
+
+QUESTION 6 :
+UPDATE BOOK SET PRICE=PRICE/1.25;
+
+
+----------------------------------------------------------------------------SET 2 ------------------------------------------------------------------------------
+QUESTION 1 :
+create table book(ISBN varchar(5) primary key check(ISBN like 'I%'),title varchar(10) not null, price decimal(10,2) check (price>0), year number(10) not null);
+
+create table written_by(isbn varchar(5),foreign key(isbn) references book(isbn),aid varchar(5),foreign key(aid) references author(aid));
+
+create table AUTHOR(aid varchar(5) primary key check(aid like 'A%'),Name varchar(10) not null , CITY varchar(10) check(city in('DELHI','MUMBAI','KOLKATA','CHENNAI')));
+
+
+insert into book values('I001','IDB',600.5,2017);
+insert into book values('I002','DOS',550.5,2018);
+insert into book values('I003','ADA',500.5,2017);
+insert into book values('I004','USP',750.50,2018);
+
+INSERT INTO AUTHOR VALUES('A0001','H.F.KORTH','MUMBAI');
+INSERT INTO AUTHOR VALUES('A0002','S.SUDARSHAN','DELHI');
+INSERT INTO AUTHOR VALUES('A0003','P.GALVIN','MUMBAI');
+INSERT INTO AUTHOR VALUES('A0004','S.SHARMA','CHENNAI');
+
+insert into written_by VALUES('I001','A0001');
+insert into written_by VALUES('I002','A0003');
+insert into written_by VALUES('I004','A0003');
+insert into written_by VALUES('I003','A0004');
+
+QUESTION 2 :
+SELECT NAME, TITLE FROM AUTHOR NATURAL JOIN WRITTEN_BY NATURAL JOIN BOOK WHERE NAME LIKE'S%';
+
+QUESTION 3 :
+SELECT YEAR ,COUNT(YEAR)FROM BOOK GROUP BY YEAR;
+
+QUESTION 4 :
+SELECT ISBN,TITLE FROM BOOK WHERE PRICE=(SELECT MIN(PRICE)FROM BOOK);
+
+QUESTION 5 :
+SELECT AID,NAME from author where aid in(select aid from written_by where isbn in(select isbn from book where title='IDB' or title='USP'));
+SELECT AID,NAME FROM AUTHOR NATURAL JOIN WRITTEN_BY NATURAL JOIN BOOK W
+HERE  title='IDB' or title='USP';
+
+QUESTION 6 :
+UPDATE BOOK SET PRICE=PRICE*1.25;
+
+----------------------------------------------------------------------------SET 3 ------------------------------------------------------------------------------
+
+
+1>create table salesman(sid varchar(4) primary key check(sid like 'S___'),name character(15) not null,city character(10) not null,commision decimal(5,2));
+
+create table order_detail(ord_no varchar(4) primary key check(ord_no like 'O___'),oamount decimal(5,2) not null,sid varchar(4),foreign key(sid) references salesman(sid),cid varchar(4),foreign key(cid) references customer(cid));
+
+create table customer(cid varchar(4) primary key check(cid like'C___'),cname character(10) not null,ccity character(10) not null);
+
+2>select name,cname from customer natural join order_detail natural join salesman where city=ccity;
+
+3>select count(cid) from customer group by ccity;
+
+4>select sid,name from salesman where commision in(select min(commision) from salesman);
+
+5> select cid,cname from customer where cid in(select cid from order_detail where sid in(select sid from salesman where city in ('London','New York')));
+
+6>update salesman set commision=commision*1.05 where name like '_a%';
+
+
+----------------------------------------------------------------------------SET 4 ------------------------------------------------------------------------------
+
+1>create table salesman(sid varchar(4) primary key check(sid like 'S___'),name character(15) not null,city character(10) not null,commision decimal(5,2));
+
+create table order_detail(ord_no varchar(4) primary key check(ord_no like 'O___'),oamount decimal(5,2) not null,sid varchar(4),foreign key(sid) references salesman(sid),cid varchar(4),foreign key(cid) references customer(cid));
+
+create table customer(cid varchar(4) primary key check(cid like'C___'),cname character(10) not null,ccity character(10) not null);
+
+2> select ord_no,oamount,cid,cname from salesman natural join order_detail natural join customer where city in ('London','New York');
+3> select count(sid),city from salesman group by city;
+4>  select sid,name from salesman where commision>(select avg(commision) from salesman);
+5> select cid,cname from customer where cid in(select cid from order_detail where oamount>1000);
+6> update salesman set commision=commision/0.2 where name like '%e';
+
+
